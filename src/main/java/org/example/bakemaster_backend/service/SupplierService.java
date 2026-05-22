@@ -12,4 +12,5 @@ public class SupplierService {
     public SupplierService(SupplierRepository repo) { this.repo = repo; }
     public List<Supplier> getAll() { return repo.findAll(); }
     public Supplier add(Supplier supplier) { return repo.save(supplier); }
+    public void delete(Long id) { repo.deleteById(id); }
 }
