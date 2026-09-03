@@ -17,4 +17,5 @@ public class Ingredient {
     private String unit;
     private LocalDate expiryDate;
     private double reorderThreshold;
+    private double costPerUnit;
 }

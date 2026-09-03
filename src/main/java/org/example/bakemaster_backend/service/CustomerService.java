@@ -20,4 +20,11 @@ public class CustomerService {
     public List<OrderEntity> getCustomerOrders(Long customerId) {
         return orderRepo.findByCustomerId(customerId);
     }
+    public Customer add(Customer customer) {
+        return customerRepo.save(customer);
+    }
+
+    public void delete(Long id) {
+        customerRepo.deleteById(id);
+    }
 }
