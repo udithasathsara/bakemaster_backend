@@ -15,9 +15,17 @@ public class PurchaseOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private Long supplierId;
+
     private LocalDate orderDate;
-    private String status; // PENDING, SENT
+    private LocalDate receivedDate;
+
+    // Status: PENDING, SENT, RECEIVED, CANCELLED
+    private String status;
+
+    private double totalAmount;
 
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseOrderItem> items = new ArrayList<>();

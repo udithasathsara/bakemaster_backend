@@ -32,24 +32,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String token = getTokenFromRequest(request);
+        System.out.println("=== Filter Debug ===");
+        System.out.println("Request: " + request.getRequestURI());
+        System.out.println("Token: " + (token != null ? "present" : "missing"));
 
-        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
-            String username = tokenProvider.getUsernameFromToken(token);
-            String role = tokenProvider.getRoleFromToken(token);
+        if (StringUtils.hasText(token)) {
+            try {
+                if (tokenProvider.validateToken(token)) {
+                    String username = tokenProvider.getUsernameFromToken(token);
+                    String role = tokenProvider.getRoleFromToken(token);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            username,
-                            null,
-                            Collections.singletonList(new SimpleGrantedAuthority(role))
+                    System.out.println("Username: " + username);
+                    System.out.println("Role: " + role);
+
+                    // Use role directly - ensure it has ROLE_ prefix
+                    String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+                    System.out.println("Authority: " + authority);
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    username,
+                                    null,
+                                    Collections.singletonList(new SimpleGrantedAuthority(authority))
+                            );
+
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
                     );
 
-            authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    System.out.println("Authentication set successfully");
+                } else {
+                    System.out.println("Token invalid");
+                }
+            } catch (Exception e) {
+                System.out.println("Error in filter: " + e.getMessage());
+            }
         }
+        System.out.println("====================");
 
         filterChain.doFilter(request, response);
     }
@@ -62,4 +82,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 }
-

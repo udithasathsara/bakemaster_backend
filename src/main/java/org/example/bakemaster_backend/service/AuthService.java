@@ -28,17 +28,45 @@ public class AuthService {
         UserEntity user = new UserEntity();
         user.setUsername(dto.getUsername());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole("ROLE_STAFF"); // default role
+        user.setRole("ROLE_STAFF");
+        user.setActive(true);
         userRepo.save(user);
         return "User registered successfully";
     }
 
     public String login(LoginDto dto) {
+        System.out.println("=== Login Attempt ===");
+        System.out.println("Username: " + dto.getUsername());
+        System.out.println("Password: " + dto.getPassword());
+
         UserEntity user = userRepo.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+                .orElseThrow(() -> {
+                    System.out.println("User not found!");
+                    return new BadCredentialsException("Invalid username or password");
+                });
+
+        System.out.println("User found: " + user.getUsername());
+        System.out.println("Role: " + user.getRole());
+        System.out.println("Active: " + user.isActive());
+        System.out.println("Stored password: " + user.getPassword());
+
+        if (!user.isActive()) {
+            System.out.println("Account deactivated!");
+            throw new BadCredentialsException("Account is deactivated");
+        }
+
+        boolean passwordMatches = passwordEncoder.matches(dto.getPassword(), user.getPassword());
+        System.out.println("Password matches: " + passwordMatches);
+
+        if (!passwordMatches) {
+            System.out.println("Password incorrect!");
             throw new BadCredentialsException("Invalid username or password");
         }
-        return tokenProvider.generateToken(user.getUsername(), user.getRole());
+
+        String token = tokenProvider.generateToken(user.getUsername(), user.getRole());
+        System.out.println("Token generated: " + token.substring(0, Math.min(20, token.length())) + "...");
+        System.out.println("====================");
+
+        return token;
     }
 }

@@ -1,31 +1,32 @@
 package org.example.bakemaster_backend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "staff")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String username;
-
     @Column(nullable = false)
-    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
-    private String password;
+    private String name;
 
-    @Column(nullable = false)
-    private String role; // "ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_STAFF"
-
-    private String fullName;
-    private String email;
+    private String role; // "BAKER", "DECORATOR", "DELIVERY", "CASHIER", "MANAGER"
     private String phone;
+    private String email;
+
+    private LocalTime shiftStart;
+    private LocalTime shiftEnd;
+
     private boolean active = true;
 
     @Column(name = "created_at")
