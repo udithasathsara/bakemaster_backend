@@ -18,8 +18,8 @@ public class RecipeItemDto {
     private String ingredientName;
 
     @Positive(message = "Quantity required must be positive")
-    private double quantityRequired;
+    private Double quantityRequired = 0.0;
 
     private String unit;
-    private double estimatedCost;
+    private Double estimatedCost = 0.0;
 }

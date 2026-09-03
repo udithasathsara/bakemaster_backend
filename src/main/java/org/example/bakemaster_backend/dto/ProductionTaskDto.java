@@ -18,7 +18,7 @@ public class ProductionTaskDto {
 
     private Long orderItemId;
     private String productName;
-    private int quantity;
+    private Integer quantity = 1;
 
     @NotBlank(message = "Task type is required")
     private String taskType; // BAKING, DECORATING, PACKAGING, DELIVERY
@@ -36,6 +36,6 @@ public class ProductionTaskDto {
     private LocalDateTime actualStart;
     private LocalDateTime actualEnd;
 
-    private int priority = 2; // 1-High, 2-Medium, 3-Low
+    private Integer priority = 2; // 1-High, 2-Medium, 3-Low
     private String notes;
 }

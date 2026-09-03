@@ -2,6 +2,7 @@ package org.example.bakemaster_backend.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,11 +23,12 @@ public class ProductDto {
     @NotBlank(message = "Category is required")
     private String category; // CAKE, BREAD, PASTRY, COOKIE, CUPCAKE
 
+    @NotNull(message = "Selling price is required")
     @Positive(message = "Selling price must be positive")
-    private double sellingPrice;
+    private Double sellingPrice;
 
-    private double costPrice;
-    private int shelfLifeDays;
+    private Double costPrice = 0.0;
+    private Integer shelfLifeDays = 3;
     private String description;
     private String imageUrl;
     private boolean active = true;

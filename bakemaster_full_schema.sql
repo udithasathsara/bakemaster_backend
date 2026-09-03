@@ -257,10 +257,10 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- 1. Default Users
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `full_name`, `email`, `phone`, `active`, `created_at`) VALUES 
-(1, 'superadmin', '$2a$10$CwTycUXWue0Thq9StjUM0uJ5Z6kM5fQ5fQ5fQ5fQ5fQ5fQ5fQ5fQ5', 'ROLE_SUPER_ADMIN', 'Super Admin', 'super@bakemaster.com', '111-111', 1, NOW()),
-(2, 'admin', '$2a$10$CwTycUXWue0Thq9StjUM0uJ5Z6kM5fQ5fQ5fQ5fQ5fQ5fQ5fQ5fQ5', 'ROLE_ADMIN', 'Admin User', 'admin@bakemaster.com', '222-222', 1, NOW()),
-(3, 'manager', '$2a$10$CwTycUXWue0Thq9StjUM0uJ5Z6kM5fQ5fQ5fQ5fQ5fQ5fQ5fQ5fQ5', 'ROLE_MANAGER', 'Manager User', 'manager@bakemaster.com', '333-333', 1, NOW()),
-(4, 'staff1', '$2a$10$CwTycUXWue0Thq9StjUM0uJ5Z6kM5fQ5fQ5fQ5fQ5fQ5fQ5fQ5fQ5', 'ROLE_STAFF', 'Staff One', 'staff1@bakemaster.com', '444-444', 1, NOW())
+(1, 'superadmin', '$2a$10$pzmVdNzc4WjHjMykUjWUreSAxXczYOCgVQiJcGYuQcHMpXzcCBDQC', 'ROLE_SUPER_ADMIN', 'Super Admin', 'super@bakemaster.com', '111-111', 1, NOW()),
+(2, 'admin', '$2a$10$pzmVdNzc4WjHjMykUjWUreSAxXczYOCgVQiJcGYuQcHMpXzcCBDQC', 'ROLE_ADMIN', 'Admin User', 'admin@bakemaster.com', '222-222', 1, NOW()),
+(3, 'manager', '$2a$10$pzmVdNzc4WjHjMykUjWUreSAxXczYOCgVQiJcGYuQcHMpXzcCBDQC', 'ROLE_MANAGER', 'Manager User', 'manager@bakemaster.com', '333-333', 1, NOW()),
+(4, 'staff1', '$2a$10$pzmVdNzc4WjHjMykUjWUreSAxXczYOCgVQiJcGYuQcHMpXzcCBDQC', 'ROLE_STAFF', 'Staff One', 'staff1@bakemaster.com', '444-444', 1, NOW())
 ON DUPLICATE KEY UPDATE `username`=`username`;
 
 -- 2. Staff Members
