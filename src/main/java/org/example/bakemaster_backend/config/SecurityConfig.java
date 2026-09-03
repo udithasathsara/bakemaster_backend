@@ -32,7 +32,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -40,30 +40,65 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints (no authentication needed)
+                        // Public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Dashboard - any authenticated user
+                        // Dashboard - all authenticated
                         .requestMatchers(HttpMethod.GET, "/api/dashboard").authenticated()
 
-                        // Inventory - read for all, write for ADMIN only
-                        .requestMatchers(HttpMethod.GET, "/api/inventory/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/inventory").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/inventory/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/inventory/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/inventory/generate-po").hasRole("ADMIN")
+                        // Products & Recipes
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
 
-                        // Orders - all authenticated users
+                        // Inventory - read all, write admin+
+                        .requestMatchers(HttpMethod.GET, "/api/inventory/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/inventory").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/inventory/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/inventory/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/inventory/generate-po").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
+
+                        // Food Waste Logs
+                        .requestMatchers(HttpMethod.GET, "/api/waste-logs/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/waste-logs/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+
+                        // Orders - all authenticated
                         .requestMatchers("/api/orders/**").authenticated()
 
-                        // Suppliers - read for all, write for ADMIN
+                        // Suppliers
                         .requestMatchers(HttpMethod.GET, "/api/suppliers/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/suppliers").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/suppliers").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/suppliers/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/suppliers/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
 
-                        // Customers - read for all
+                        // Customers
                         .requestMatchers(HttpMethod.GET, "/api/customers/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/customers").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/customers/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/customers/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
 
-                        // All other requests need authentication
+                        // Purchase Orders
+                        .requestMatchers(HttpMethod.GET, "/api/purchase-orders/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/purchase-orders/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/purchase-orders/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+
+                        // Staff Management
+                        .requestMatchers(HttpMethod.GET, "/api/staff/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/staff").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/staff/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/staff/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
+
+                        // Production Tasks
+                        .requestMatchers(HttpMethod.GET, "/api/production-tasks/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/production-tasks").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/production-tasks/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/production-tasks/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
+
+                        // User Management - SUPER_ADMIN and ADMIN
+                        .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_ADMIN")
+
+                        // All other requests
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -74,9 +109,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
