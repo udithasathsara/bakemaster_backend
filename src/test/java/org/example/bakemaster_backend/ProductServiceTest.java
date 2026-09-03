@@ -66,8 +66,8 @@ class ProductServiceTest {
         dto.setCategory("BREAD");
         dto.setSellingPrice(15.0);
 
-        RecipeItemDto ri1 = new RecipeItemDto(null, 1L, "Flour", 0.5, "kg", 0);
-        RecipeItemDto ri2 = new RecipeItemDto(null, 2L, "Butter", 0.2, "kg", 0);
+        RecipeItemDto ri1 = new RecipeItemDto(null, 1L, "Flour", 0.5, "kg", 0.0);
+        RecipeItemDto ri2 = new RecipeItemDto(null, 2L, "Butter", 0.2, "kg", 0.0);
         dto.setRecipeItems(List.of(ri1, ri2));
 
         ProductDto created = productService.createProduct(dto);
