@@ -53,8 +53,8 @@ public class ProductService {
         Product product = new Product();
         product.setName(dto.getName());
         product.setCategory(dto.getCategory());
-        product.setSellingPrice(dto.getSellingPrice());
-        product.setShelfLifeDays(dto.getShelfLifeDays());
+        product.setSellingPrice(dto.getSellingPrice() != null ? dto.getSellingPrice() : 0.0);
+        product.setShelfLifeDays(dto.getShelfLifeDays() != null ? dto.getShelfLifeDays() : 3);
         product.setDescription(dto.getDescription());
         product.setImageUrl(dto.getImageUrl());
         product.setActive(true);
@@ -67,13 +67,14 @@ public class ProductService {
                 Ingredient ingredient = ingredientRepo.findById(itemDto.getIngredientId())
                         .orElseThrow(() -> new RuntimeException("Ingredient not found with id: " + itemDto.getIngredientId()));
 
+                double qty = itemDto.getQuantityRequired() != null ? itemDto.getQuantityRequired() : 0.0;
                 RecipeItem recipeItem = new RecipeItem();
                 recipeItem.setProduct(product);
                 recipeItem.setIngredient(ingredient);
-                recipeItem.setQuantityRequired(itemDto.getQuantityRequired());
+                recipeItem.setQuantityRequired(qty);
                 recipeItem.setUnit(itemDto.getUnit() != null ? itemDto.getUnit() : ingredient.getUnit());
 
-                totalCost += (ingredient.getCostPerUnit() * itemDto.getQuantityRequired());
+                totalCost += (ingredient.getCostPerUnit() * qty);
                 items.add(recipeItem);
             }
         }
@@ -91,8 +92,8 @@ public class ProductService {
 
         product.setName(dto.getName());
         product.setCategory(dto.getCategory());
-        product.setSellingPrice(dto.getSellingPrice());
-        product.setShelfLifeDays(dto.getShelfLifeDays());
+        product.setSellingPrice(dto.getSellingPrice() != null ? dto.getSellingPrice() : 0.0);
+        product.setShelfLifeDays(dto.getShelfLifeDays() != null ? dto.getShelfLifeDays() : 3);
         product.setDescription(dto.getDescription());
         product.setImageUrl(dto.getImageUrl());
         product.setActive(dto.isActive());
@@ -105,13 +106,14 @@ public class ProductService {
                 Ingredient ingredient = ingredientRepo.findById(itemDto.getIngredientId())
                         .orElseThrow(() -> new RuntimeException("Ingredient not found with id: " + itemDto.getIngredientId()));
 
+                double qty = itemDto.getQuantityRequired() != null ? itemDto.getQuantityRequired() : 0.0;
                 RecipeItem recipeItem = new RecipeItem();
                 recipeItem.setProduct(product);
                 recipeItem.setIngredient(ingredient);
-                recipeItem.setQuantityRequired(itemDto.getQuantityRequired());
+                recipeItem.setQuantityRequired(qty);
                 recipeItem.setUnit(itemDto.getUnit() != null ? itemDto.getUnit() : ingredient.getUnit());
 
-                totalCost += (ingredient.getCostPerUnit() * itemDto.getQuantityRequired());
+                totalCost += (ingredient.getCostPerUnit() * qty);
                 product.getRecipeItems().add(recipeItem);
             }
         }

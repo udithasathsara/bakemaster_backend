@@ -35,6 +35,8 @@ public class Product {
     @Column(length = 1000)
     private String description;
 
+    @Lob
+    @Column(name = "image_url", columnDefinition = "LONGTEXT")
     private String imageUrl;
 
     private boolean active = true;
